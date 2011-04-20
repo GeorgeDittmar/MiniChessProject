@@ -1,0 +1,17 @@
+AI NOTES 4-19-11
+
+Incremental eval just checks to see if a piece was taken and if so then subtract that piece score from the board.
+
+better way
+- keep global variable E which is eval of the starting board, so zero.
+	- whenever move is made e += piece value of piece captured
+	- if undo is done -= value of the piece that is brought back
+	
+	- add a end search value that gets the heck out of the recursive call so it stop searching period.
+	
+IMCS server
+ 100 IMCS 2.3 
+ 	- 2.3 is the version number
+ 	-type help for help
+ 	
+ FIX HUMAN CORD MOVES!!!!!!!!
