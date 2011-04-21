@@ -64,24 +64,23 @@ public class MiniChess {
 				1 * 1000); // subsequent rate
 		
 		int depth = 1;
-		float max = Float.NEGATIVE_INFINITY;
+		float v = Float.NEGATIVE_INFINITY;
 		State move = s; // maybe do a negamax run to get an initial
 		
 		while (isThinking) {
 			
-			
+			float alpha = Float.NEGATIVE_INFINITY;
+			float beta = Float.POSITIVE_INFINITY;
 			for (Move m : s.moves()) {
 				
 				// check if time has run out if so just break out of the loop
 				State sTemp = s.move(m);
-				float maxPrime = negaMax(depth, sTemp);
+				float vPrime = Math.max(v,negaMax(depth, sTemp,-alpha,-beta));
+				alpha = Math.max(alpha,vPrime);
 				
-				
-				if (maxPrime > max) {
-				
-					max = maxPrime;
+				if (vPrime > v) {	
+					v = vPrime;
 					move = sTemp;
-					
 				}
 				
 			}
@@ -99,7 +98,7 @@ public class MiniChess {
 	 * @param s
 	 * @return
 	 */
-	public float negaMax(int depth, State s) {
+	public float negaMax(int depth, State s,float a, float b) {
 
 		float max = Float.NEGATIVE_INFINITY;
 		// check to see if we have reached the maximum depth or if the state is
@@ -108,7 +107,7 @@ public class MiniChess {
 			
 			return (float) (s.eval());
 		}
-
+		float alpha = a;
 		// possibly change this to a while loop that checks to see if there is time or not && there are moves to make
 		//while(!isThinking&& count <s.moves().size())
 		for (Move m : s.moves()) {
@@ -116,7 +115,8 @@ public class MiniChess {
 			// check if time is up
 			State sTemp = s.move(m);
 
-			float score = -negaMax(depth - 1, sTemp);
+			float score = Math.max(max,-negaMax(depth - 1, sTemp, a, b));
+			
 			if (score > max) {
 				max = score;
 			}
