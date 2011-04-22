@@ -1,7 +1,6 @@
 package app;
 
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -47,6 +46,38 @@ public class MiniChess {
 		System.out.println("Game Over: \n" + board.printBoard());
 
 	}
+	
+	public void humanPlay(){
+		State board = new State();
+		board.initBoard();
+
+		// loop till the game is over
+		long start = System.currentTimeMillis();// value?
+		
+		while (!board.gameOver()) {
+
+			// call state.moves then randomly pick one then call state.move(m)
+			
+		
+			System.out.println(board.printBoard());
+			
+			if(board.onMove =='b'){
+				board = negamaxDriver(board);
+			}else{
+				System.out.println("Type move");
+				Scanner scan = new Scanner(System.in);
+				String move = scan.next();
+				
+				board = board.humanMove(move);
+			}
+		
+
+		}
+
+		System.out.println("Time: "+ (System.currentTimeMillis()-start));
+	
+		System.out.println("Game Over: \n" + board.printBoard());
+	}
 
 	/**
 	 * The driver of the negamax algorithm
@@ -71,22 +102,26 @@ public class MiniChess {
 			
 			float alpha = Float.NEGATIVE_INFINITY;
 			float beta = Float.POSITIVE_INFINITY;
+			
 			for (Move m : s.moves()) {
 				
 				// check if time has run out if so just break out of the loop
 				State sTemp = s.move(m);
-				float vPrime = Math.max(v,negaMax(depth, sTemp,-alpha,-beta));
+				float vPrime = Math.max(v,-negaMax(depth, sTemp,-beta,-alpha));
+				
+				
 				alpha = Math.max(alpha,vPrime);
 				
 				if (vPrime > v) {	
 					v = vPrime;
 					move = sTemp;
 				}
-				
 			}
 			
 			depth++;
 		}
+		
+		System.out.println("DEPTH:"+depth);
 		
 		return move;
 	}
@@ -100,13 +135,14 @@ public class MiniChess {
 	 */
 	public float negaMax(int depth, State s,float a, float b) {
 
-		float max = Float.NEGATIVE_INFINITY;
+	
 		// check to see if we have reached the maximum depth or if the state is
 		// an ending state
 		if (s.gameOver() || depth <= 0 || !isThinking) {
 			
 			return (float) (s.eval());
 		}
+		float max = Float.NEGATIVE_INFINITY;
 		float alpha = a;
 		// possibly change this to a while loop that checks to see if there is time or not && there are moves to make
 		//while(!isThinking&& count <s.moves().size())
@@ -115,11 +151,13 @@ public class MiniChess {
 			// check if time is up
 			State sTemp = s.move(m);
 
-			float score = Math.max(max,-negaMax(depth - 1, sTemp, a, b));
+			max = Math.max(max,-negaMax(depth - 1, sTemp, -b, -a));
+			alpha = Math.max(alpha, max);
 			
-			if (score > max) {
-				max = score;
+			if(max >= b){
+				return max;
 			}
+			
 		}
 
 		return  max;
@@ -128,12 +166,12 @@ public class MiniChess {
 
 	public static void main(String[] args) {
 		MiniChess game = new MiniChess();
-		game.startRandomGame();
+		game.humanPlay();
 	}
 
 	public class AiThinkTime extends TimerTask {
 
-		int time = 2;
+		int time = 4;
 
 		@Override
 		public void run() {

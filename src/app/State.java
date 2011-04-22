@@ -697,18 +697,15 @@ public class State implements Cloneable {
 
 		if (kingGone && onMove == 'w') {
 			if (king == 1) {
-				
-				return 10000;
-			} else if (king == 0) {
-				
 				return -10000;
+			} else if (king == 0) {
+				return 10000;
 			}
 		} else if (kingGone && onMove == 'b') {
 			if (king == 1) {
-				
-				return -10000;
-			} else if (king == 0) {
 				return 10000;
+			} else if (king == 0) {
+				return -10000;
 			}
 		}
 		Random rand = new Random();
